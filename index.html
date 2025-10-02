@@ -1,1 +1,83 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <link rel="icon" type="image/x-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABJklEQVR4Ae2WpVaFQRSFcaeS4QVwIjTiLbgk7D1w9xeg4FQcOu6acHeXtNnDmsFd7in/WetLI+f7dbYDAFEsAUvgoeAQ5k5iSQFpIH1kkMyQFXJMTsgpwTuc6jlHes2M3qNP71mge7g76DLNg8gygZ1QckGmuSdZJ7Azq8RDCSQTCJGgBCoFBWqVQLegQJcSmPnWIr9oICMXcIr4C4FJJbD9rUX+NtzX+CIQlfVbgS0lcP4jAVNt/UCA7acCZ0oAPxfQdXMLFNUBvpHflvgbAVM7h0B6zrfeD3kB+Ucg/xLKf4biPyLJX3GH9GFUogRSBQUSTSBZEwskQpFs1USyl6E0gRSRJtJPhsnci1B69oVQeqzXzOo9+kmj3juBeDw2BkSxBCyBO+9s03HRLVCoAAAAAElFTkSuQmCC"> <title></title> <style> body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #111; color: white; } input { width: 300px; padding: 10px; border-radius: 5px; border: none; margin: 10px 0; } button { padding: 10px 15px; border: none; border-radius: 5px; background: #e62117; color: white; font-weight: bold; cursor: pointer; } iframe { margin-top: 20px; width: 560px; height: 315px; border: none; border-radius: 10px; } </style> </head> <body> <h1>Youtube unblocker</h1> <input type="text" id="ytLink" placeholder="Yt länk"> <button onclick="loadVideo()">Load Video</button> <div id="videoContainer"></div> <script> function loadVideo() { let url = document.getElementById('ytLink').value; let videoId = ""; if (url.includes("v=")) { videoId = url.split("v=")[1].split("&")[0]; } else if (url.includes("youtu.be/")) { videoId = url.split("youtu.be/")[1].split("?")[0]; } if (videoId) { document.getElementById('videoContainer').innerHTML = <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>; } else { alert("Fel link"); } } </script> </body> </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon"
+        href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABJklEQVR4Ae2WpVaFQRSFcaeS4QVwIjTiLbgk7D1w9xeg4FQcOu6acHeXtNnDmsFd7in/WetLI+f7dbYDAFEsAUvgoeAQ5k5iSQFpIH1kkMyQFXJMTsgpwTuc6jlHes2M3qNP71mge7g76DLNg8gygZ1QckGmuSdZJ7Azq8RDCSQTCJGgBCoFBWqVQLegQJcSmPnWIr9oICMXcIr4C4FJJbD9rUX+NtzX+CIQlfVbgS0lcP4jAVNt/UCA7acCZ0oAPxfQdXMLFNUBvpHflvgbAVM7h0B6zrfeD3kB+Ucg/xLKf4biPyLJX3GH9GFUogRSBQUSTSBZEwskQpFs1USyl6E0gRSRJtJPhsnci1B69oVQeqzXzOo9+kmj3juBeDw2BkSxBCyBO+9s03HRLVCoAAAAAElFTkSuQmCC">
+  <title>YouTube Unblocker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #111;
+      color: white;
+      margin: 0;
+    }
+
+    input {
+      width: 300px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      margin: 10px 0;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #e62117;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background: #c91512;
+    }
+
+    iframe {
+      margin-top: 20px;
+      width: 560px;
+      height: 315px;
+      border: none;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Unblocker</h1>
+  <input type="text" id="ytLink" placeholder="Enter YouTube link">
+  <button onclick="loadVideo()">Load Video</button>
+  <div id="videoContainer"></div>
+
+  <script>
+    function loadVideo() {
+      let url = document.getElementById('ytLink').value.trim();
+      let videoId = "";
+
+      if (url.includes("v=")) {
+        videoId = url.split("v=")[1].split("&")[0];
+      } else if (url.includes("youtu.be/")) {
+        videoId = url.split("youtu.be/")[1].split("?")[0];
+      }
+
+      if (videoId) {
+        document.getElementById('videoContainer').innerHTML =
+          `<iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>`;
+      } else {
+        alert("Invalid YouTube link");
+      }
+    }
+  </script>
+</body>
+</html>
+```
