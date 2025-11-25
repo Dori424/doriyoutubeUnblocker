@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon"
-        href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABJklEQVR4Ae2WpVaFQRSFcaeS4QVwIjTiLbgk7D1w9xeg4FQcOu6acHeXtNnDmsFd7in/WetLI+f7dbYDAFEsAUvgoeAQ5k5iSQFpIH1kkMyQFXJMTsgpwTuc6jlHes2M3qNP71mge7g76DLNg8gygZ1QckGmuSdZJ7Azq8RDCSQTCJGgBCoFBWqVQLegQJcSmPnWIr9oICMXcIr4C4FJJbD9rUX+NtzX+CIQlfVbgS0lcP4jAVNt/UCA7acCZ0oAPxfQdXMLFNUBvpHflvgbAVM7h0B6zrfeD3kB+Ucg/xLKf4biPyLJX3GH9GFUogRSBQUSTSBZEwskQpFs1USyl6E0gRSRJtJPhsnci1B69oVQeqzXzOo9+kmj3juBeDw2BkSxBCyBO+9s03HRLVCoAAAAAElFTkSuQmCC">
-  <title>YouTube Unblocker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Unblocker PRO</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,28 +12,40 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: #111;
+      background: #0d0d0d;
       color: white;
       margin: 0;
     }
 
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #ff4c4c;
+    }
+
+    .input-box {
+      display: flex;
+      gap: 10px;
+    }
+
     input {
-      width: 300px;
+      width: 320px;
       padding: 10px;
-      border-radius: 5px;
+      border-radius: 6px;
       border: none;
-      margin: 10px 0;
       outline: none;
+      font-size: 16px;
     }
 
     button {
-      padding: 10px 15px;
+      padding: 10px 16px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       background: #e62117;
       color: white;
       font-weight: bold;
       cursor: pointer;
+      font-size: 16px;
       transition: background 0.2s ease-in-out;
     }
 
@@ -44,55 +54,61 @@
     }
 
     iframe {
-      margin-top: 20px;
+      margin-top: 25px;
       width: 560px;
       height: 315px;
       border: none;
       border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
     }
   </style>
 </head>
 <body>
-  <h1>YouTube Unblocker</h1>
-  <input type="text" id="ytLink" placeholder="Enter YouTube link">
-  <button onclick="loadVideo()">Ladda video</button>
+  <h1>YouTube Unblocker PRO</h1>
+
+  <div class="input-box">
+    <input id="ytLink" type="text" placeholder="Enter YouTube link (any format)" />
+    <button onclick="loadVideo()">Load</button>
+  </div>
+
   <div id="videoContainer"></div>
 
   <script>
-    function loadVideo() {
-      let url = document.getElementById('ytLink').value.trim();
-      let videoId = "";
+    function extractVideoId(url) {
+      try {
+        // Handle many possible URL formats
+        const patterns = [
+          /v=([^&]+)/,                 // standard: https://www.youtube.com/watch?v=ID
+          /youtu\.be\/([^?]+)/,        // short: https://youtu.be/ID
+          /embed\/([^?]+)/,            // embed format
+          /shorts\/([^?]+)/            // shorts support
+        ];
 
-      if (url.includes("v=")) {
-        videoId = url.split("v=")[1].split("&")[0];
-      } else if (url.includes("youtu.be/")) {
-        videoId = url.split("youtu.be/")[1].split("?")[0];
-      }
-
-      if (videoId) {
-        document.getElementById('videoContainer').innerHTML =
-          `<iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>`;
-      } else {
-        alert("Invalid YouTube link");
-      }
-
-          if (event.data == YT.PlayerState.PLAYING) {
-            // Get the current video ID
-            const videoId = player.getVideoData().video_id;
-
-            // Build video link
-            const link = "https://www.youtube.com/watch?v=" + videoId;
-
-            if (videoId) {
-              document.getElementById('videoContainer').innerHTML =
-                `<iframe src="https://www.youtube.com/watch?v${videoId}" allowfullscreen></iframe>`;
-            } else {
-              alert("Invalid YouTube link");
-            }
-
-            
-          }
+        for (const p of patterns) {
+          const match = url.match(p);
+          if (match) return match[1];
         }
+        return null;
+      } catch {
+        return null;
+      }
+    }
+
+    function loadVideo() {
+      const url = document.getElementById("ytLink").value.trim();
+      const videoId = extractVideoId(url);
+
+      if (!videoId) {
+        alert("Invalid YouTube link");
+        return;
+      }
+
+      const embedURL = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&controls=1`;
+
+      document.getElementById("videoContainer").innerHTML = `
+        <iframe src="${embedURL}" allowfullscreen></iframe>
+      `;
+    }
   </script>
 </body>
 </html>
