@@ -21,31 +21,34 @@
       font-size: 32px;
       margin-bottom: 20px;
       color: #ff4c4c;
+      text-align: center;
     }
 
     .input-box {
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     input {
-      width: 320px;
-      padding: 10px;
+      width: 360px;
+      padding: 12px;
       border-radius: 6px;
       border: none;
       outline: none;
-      font-size: 16px;
+      font-size: 17px;
     }
 
     button {
-      padding: 10px 16px;
+      padding: 12px 18px;
       border: none;
       border-radius: 6px;
       background: #e62117;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 17px;
       transition: background 0.2s ease-in-out;
     }
 
@@ -55,8 +58,10 @@
 
     iframe {
       margin-top: 25px;
-      width: 560px;
-      height: 315px;
+      width: 90vw;
+      max-width: 900px;
+      height: calc(90vw * 0.5625);
+      max-height: 510px;
       border: none;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
@@ -72,6 +77,7 @@
   </div>
 
   <div id="videoContainer"></div>
+  <div id="recommended" style="margin-top:30px; max-width:900px; width:90vw; text-align:center;"></div>
 
   <script>
     function extractVideoId(url) {
@@ -102,6 +108,25 @@
         alert("Invalid YouTube link");
         return;
       }
+
+      const embedURL = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&controls=1&enablejsapi=1`;
+
+      document.getElementById("videoContainer").innerHTML = `
+        <iframe id="player" src="${embedURL}" allowfullscreen></iframe>
+      `;
+
+      loadRecommended(videoId);
+    }
+
+    function loadRecommended(videoId) {
+      // Use YT auto-generated related playlist
+      const relatedURL = `https://www.youtube.com/embed/videoseries?list=RD${videoId}`;
+
+      document.getElementById("recommended").innerHTML = `
+        <h2 style='margin-bottom:15px;'>Recommended Videos</h2>
+        <iframe style="height:300px;" src="${relatedURL}" allowfullscreen></iframe>
+      `;
+    }
 
       const embedURL = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&controls=1`;
 
