@@ -55,7 +55,7 @@
 <body>
   <h1>YouTube Unblocker</h1>
   <input type="text" id="ytLink" placeholder="Enter YouTube link">
-  <button onclick="loadVideo()">Load Video</button>
+  <button onclick="loadVideo()">Ladda video</button>
   <div id="videoContainer"></div>
 
   <script>
@@ -75,6 +75,25 @@
       } else {
         alert("Invalid YouTube link");
       }
+
+        function onPlayerStateChange(event) {
+          if (event.data == YT.PlayerState.PLAYING) {
+            // Get the current video ID
+            const videoId = player.getVideoData().video_id;
+
+            // Build video link
+            const link = "https://www.youtube.com/watch?v=" + videoId;
+
+            if (videoId) {
+              document.getElementById('videoContainer').innerHTML =
+                `<iframe src="https://www.youtube.com/watch?v${videoId}" allowfullscreen></iframe>`;
+            } else {
+              alert("Invalid YouTube link");
+            }
+
+            
+          }
+        }
     }
   </script>
 </body>
