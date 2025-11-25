@@ -76,7 +76,6 @@
         alert("Invalid YouTube link");
       }
 
-        function onPlayerStateChange(event) {
           if (event.data == YT.PlayerState.PLAYING) {
             // Get the current video ID
             const videoId = player.getVideoData().video_id;
@@ -94,7 +93,6 @@
             
           }
         }
-    }
   </script>
 </body>
 </html>
