@@ -82,18 +82,18 @@
   <script>
     function extractVideoId(url) {
       try {
-        // Handle many possible URL formats
         const patterns = [
-          /v=([^&]+)/,                 // standard: https://www.youtube.com/watch?v=ID
-          /youtu\.be\/([^?]+)/,        // short: https://youtu.be/ID
-          /embed\/([^?]+)/,            // embed format
-          /shorts\/([^?]+)/            // shorts support
+          /v=([^&]+)/,            // standard
+          /youtu\.be\/([^?]+)/,   // short
+          /embed\/([^?]+)/,       // embed
+          /shorts\/([^?]+)/       // shorts
         ];
 
         for (const p of patterns) {
           const match = url.match(p);
           if (match) return match[1];
         }
+
         return null;
       } catch {
         return null;
@@ -119,19 +119,11 @@
     }
 
     function loadRecommended(videoId) {
-      // Use YT auto-generated related playlist
       const relatedURL = `https://www.youtube.com/embed/videoseries?list=RD${videoId}`;
 
       document.getElementById("recommended").innerHTML = `
         <h2 style='margin-bottom:15px;'>Recommended Videos</h2>
         <iframe style="height:300px;" src="${relatedURL}" allowfullscreen></iframe>
-      `;
-    }
-
-      const embedURL = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&controls=1`;
-
-      document.getElementById("videoContainer").innerHTML = `
-        <iframe src="${embedURL}" allowfullscreen></iframe>
       `;
     }
   </script>
