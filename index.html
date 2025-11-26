@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YouTube Unblocker PRO</title>
+  <title>YouTube Unblocker PRO + Auth</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #0d0d0d;
+      color: white;
+      margin: 0;
+    }
+
+    .center {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: #0d0d0d;
-      color: white;
-      margin: 0;
     }
 
     h1 {
@@ -24,16 +27,20 @@
       text-align: center;
     }
 
-    .input-box {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .box {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,0,0,0.3);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
     }
 
-    input {
-      width: 360px;
+    input, button {
+      width: 90%;
       padding: 12px;
+      margin-top: 10px;
       border-radius: 6px;
       border: none;
       outline: none;
@@ -41,14 +48,10 @@
     }
 
     button {
-      padding: 12px 18px;
-      border: none;
-      border-radius: 6px;
       background: #e62117;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      font-size: 17px;
       transition: background 0.2s ease-in-out;
     }
 
@@ -69,6 +72,34 @@
   </style>
 </head>
 <body>
+
+<div id="loginScreen" class="center">
+  <div class="box">
+    <h2>Login</h2>
+    <input id="loginUser" type="text" placeholder="Username" />
+    <input id="loginPass" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+  </div>
+</div>
+
+<div id="adminPanel" class="center" style="display:none;">
+  <div class="box">
+    <h2>Admin Panel</h2>
+    <input id="newUser" type="text" placeholder="New Username" />
+    <input id="newPass" type="text" placeholder="New Password" />
+    <button onclick="addUser()">Add User</button>
+
+    <input id="delUser" type="text" placeholder="Delete Username" />
+    <button onclick="removeUser()">Remove User</button>
+
+    <input id="blockDev" type="text" placeholder="Device ID" />
+    <button onclick="blockDevice()">Block Device</button>
+
+    <button style="margin-top:15px; background:#444;" onclick="enterApp()">Enter App</button>
+  </div>
+</div>
+
+<div id="appScreen" style="display:none;" class="center">
   <h1>YouTube Unblocker PRO</h1>
 
   <div class="input-box">
@@ -78,54 +109,88 @@
 
   <div id="videoContainer"></div>
   <div id="recommended" style="margin-top:30px; max-width:900px; width:90vw; text-align:center;"></div>
+</div>
 
-  <script>
-    function extractVideoId(url) {
-      try {
-        const patterns = [
-          /v=([^&]+)/,            // standard
-          /youtu\.be\/([^?]+)/,   // short
-          /embed\/([^?]+)/,       // embed
-          /shorts\/([^?]+)/       // shorts
-        ];
+<script>
+  const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
+  localStorage.setItem("deviceId", deviceId);
 
-        for (const p of patterns) {
-          const match = url.match(p);
-          if (match) return match[1];
-        }
+  async function api(data) {
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...data, deviceId })
+    });
+    return res.json();
+  }
 
-        return null;
-      } catch {
-        return null;
-      }
+  async function login() {
+    const username = loginUser.value;
+    const password = loginPass.value;
+
+    const r = await api({ action: "login", username, password });
+
+    if (r.error) return alert(r.error);
+
+    if (r.admin) adminPanel.style.display = "flex";
+    else appScreen.style.display = "flex";
+
+    loginScreen.style.display = "none";
+  }
+
+  async function addUser() {
+    const r = await api({
+      action: "addUser",
+      username: loginUser.value,
+      password: loginPass.value,
+      newUser: newUser.value,
+      newPass: newPass.value
+    });
+    alert(r.error || "User added");
+  }
+
+  async function removeUser() {
+    const r = await api({
+      action: "removeUser",
+      username: loginUser.value,
+      password: loginPass.value,
+      targetUser: delUser.value
+    });
+    alert(r.error || "User removed");
+  }
+
+  async function blockDevice() {
+    const r = await api({
+      action: "blockDevice",
+      username: loginUser.value,
+      password: loginPass.value,
+      deviceId: blockDev.value
+    });
+    alert(r.error || "Device blocked");
+  }
+
+  function enterApp() {
+    adminPanel.style.display = "none";
+    appScreen.style.display = "flex";
+  }
+
+  function extractVideoId(url) {
+    const patterns = [ /v=([^&]+)/, /youtu\.be\/([^?]+)/, /embed\/([^?]+)/, /shorts\/([^?]+)/ ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
     }
+    return null;
+  }
 
-    function loadVideo() {
-      const url = document.getElementById("ytLink").value.trim();
-      const videoId = extractVideoId(url);
+  function loadVideo() {
+    const url = ytLink.value.trim();
+    const id = extractVideoId(url);
+    if (!id) return alert("Invalid YouTube link");
 
-      if (!videoId) {
-        alert("Invalid YouTube link");
-        return;
-      }
-
-      const embedURL = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&controls=1&enablejsapi=1`;
-
-      document.getElementById("videoContainer").innerHTML = `
-        <iframe id="player" src="${embedURL}" allowfullscreen></iframe>
-      `;
-
-      loadRecommended(videoId);
-    }
-
-    function loadRecommended(videoId) {
-      const relatedURL = `https://www.youtube.com/embed/videoseries?list=RD${videoId}`;
-
-      document.getElementById("recommended").innerHTML = `
-        <h2 style='margin-bottom:15px;'>Recommended Videos</h2>
-        <iframe style="height:300px;" src="${relatedURL}" allowfullscreen></iframe>
-      `;
-    }
-  </script>
+    videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>`;
+    recommended.innerHTML = `<h2>Recommended</h2><iframe style='height:300px;' src='https://www.youtube.com/embed/videoseries?list=RD${id}' allowfullscreen></iframe>`;
+  }
+</script>
 </body>
 </html>
