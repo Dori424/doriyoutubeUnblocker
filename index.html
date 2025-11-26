@@ -69,7 +69,16 @@
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
     }
-  </style>
+    /* Simple fade animation */
+    .fade {
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 </head>
 <body>
 
@@ -136,6 +145,8 @@
     else appScreen.style.display = "flex";
 
     loginScreen.style.display = "none";
+    adminPanel.classList.add('fade');
+    appScreen.classList.add('fade');
   }
 
   async function addUser() {
@@ -146,7 +157,8 @@
       newUser: newUser.value,
       newPass: newPass.value
     });
-    alert(r.error || "User added");
+        if(!r.error){ fetch('/api/save', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user:newUser.value, pass:newPass.value}) }); }
+    alert(r.error || "User added & saved");
   }
 
   async function removeUser() {
