@@ -1,5 +1,6 @@
 let users = {
   admin: { password: "ADMIN_PASSWORD_HERE", isAdmin: true },
+  hussein: { password: "Hussein0615", isAdmin: false}
 };
 
 let blockedDevices = new Set();
